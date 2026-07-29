@@ -47,23 +47,40 @@ const Dashboard = () => {
 
         
     }
-  const uploadResume = async (event) => {
+ const uploadResume = async (event) => {
     event.preventDefault();
     setIsLoading(true);
 
     try {
-        const resumeText = "This is a test resume";
+
+        if (!resume) {
+            toast.error("Please select a PDF");
+            return;
+        }
+
+        // Convert PDF into text
+        const resumeText = await pdfToText(resume);
+
+        console.log("Resume Text:", resumeText);
 
         const { data } = await api.post(
             "/api/ai/upload-resume",
-            { title, resumeText },
-            { headers: { Authorization: token } }
+            {
+                title,
+                resumeText
+            },
+            {
+                headers: {
+                    Authorization: token
+                }
+            }
         );
 
         console.log(data);
 
     } catch (error) {
         console.log(error);
+        toast.error(error?.response?.data?.message || error.message);
     } finally {
         setIsLoading(false);
     }
