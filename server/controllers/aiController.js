@@ -153,7 +153,10 @@ console.log("Content:", response.choices[0].message.content);
         const parsedData = JSON.parse(extractedData)
         const newResume = await Resume.create({userId, title, ...parsedData})
 
-        res.json({resumeId: newResume._id})
+        res.json({
+    message: "Resume uploaded successfully",
+    resume: newResume
+})
     } catch (error) {
          return res.status(400).json({message: error.message})
     }
